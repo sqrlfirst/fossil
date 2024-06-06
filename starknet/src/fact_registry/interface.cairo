@@ -7,6 +7,7 @@ pub trait IFactRegistry<TState> {
         l1_headers_store_addr: starknet::ContractAddress,
         admin: starknet::ContractAddress
     );
+    fn set_l1_headers_store(ref self: TState, l1_headers_store_addr: starknet::ContractAddress);
     fn prove_account(
         ref self: TState,
         option: OptionsSet,

@@ -50,6 +50,7 @@ pub mod L1HeaderStore {
         upgradeable: UpgradeableComponent::Storage,
         initialized: bool,
         l1_messages_origin: ContractAddress,
+        offchain_processor: ContractAddress,
         latest_l1_block: u64,
         block_parent_hash: LegacyMap::<u64, u256>,
         block_state_root: LegacyMap::<u64, u256>,
@@ -88,12 +89,25 @@ pub mod L1HeaderStore {
         fn initialize(
             ref self: ContractState,
             l1_messages_origin: starknet::ContractAddress,
-            admin: starknet::ContractAddress
+            admin: starknet::ContractAddress,
+            offchain_processor: starknet::ContractAddress
         ) {
             assert!(self.initialized.read() == false, "L1HeaderStore: already initialized");
             self.initialized.write(true);
             self.l1_messages_origin.write(l1_messages_origin);
+            self.offchain_processor.write(offchain_processor);
             self.ownable.initializer(admin);
+        }
+
+        /// Sets the address of the offchain processor contract. Can only be called by the contract owner.
+        ///
+        /// # Arguments
+        /// * `offchain_processor` - The address of the offchain processor contract.
+        fn set_offchain_processor(
+            ref self: ContractState, offchain_processor: starknet::ContractAddress
+        ) {
+            self.ownable.assert_only_owner();
+            self.offchain_processor.write(offchain_processor);
         }
 
         /// Receives `block_number` and `parent_hash` from L1 Message Proxy for processing.

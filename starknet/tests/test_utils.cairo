@@ -18,6 +18,9 @@ fn L1_ORIGIN() -> starknet::EthAddress {
 pub fn OWNER() -> starknet::ContractAddress {
     starknet::contract_address_const::<'OWNER'>()
 }
+pub fn OFFCHAIN_PROCESSOR() -> starknet::ContractAddress {
+    starknet::contract_address_const::<'OFFCHAIN_PROCESSOR'>()
+}
 #[derive(Drop, Copy)]
 pub struct Dispatchers {
     pub registry: IFactRegistryDispatcher,
@@ -39,7 +42,7 @@ pub fn setup() -> Dispatchers {
     let proxy = IL1MessagesProxyDispatcher { contract_address };
 
     registry.initialize(store.contract_address, OWNER());
-    store.initialize(proxy.contract_address, OWNER());
+    store.initialize(proxy.contract_address, OWNER(), OFFCHAIN_PROCESSOR());
     proxy.initialize(L1_ORIGIN(), store.contract_address, OWNER());
 
     Dispatchers { registry, store, proxy }

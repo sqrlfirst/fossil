@@ -87,6 +87,19 @@ pub mod FactRegistry {
             self.ownable.initializer(admin);
         }
 
+        /// Set the new address of L1 Header Store. Can be called only by the contract owner.
+        ///
+        /// # Arguments
+        /// * `l1_headers_store_addr` - The address of the L1 Header Store contract.
+        fn set_l1_headers_store(
+            ref self: ContractState, l1_headers_store_addr: starknet::ContractAddress
+        ) {
+            self.ownable.assert_only_owner();
+            self
+                .l1_headers_store
+                .write(IL1HeadersStoreDispatcher { contract_address: l1_headers_store_addr });
+        }
+
         /// Verifies the account information for a given Ethereum address  at a given block using a provided state root proof and stores the verified value.
         ///
         /// # Arguments
